@@ -8,18 +8,37 @@
 namespace App\Services\Rpc;
 
 use Hprose\Socket\Service;
+use Illuminate\Support\Facades\Log;
 
 class RpcServer
 {
     public function handle(){
         $server = new Service();
-        //1、rpc 服务的构建（Hpros,swoole,rabbitmq）
-        $server->onSendError = function($error, \stdClass $context) {
-            \Log::info($error);
+        //1、rpc 服务的构建（Hprose,swoole,rabbitmq）
+        $server->onSendError = function(&$error, \stdClass $context) {
+            Log::info($error);
         };
+        $server->onBeforeInvoke = function ($name, &$args, $byref, \stdClass $context) {
+
+        };
+        $server->onAfterInvoke  = function ($name, &$args, $byref, &$result, \stdClass $context) {
+
+        };
+        //调用中间件
+        $server->addInvokeHandler(function ($name, array &$args, \stdClass $context, \Closure $next) {
+            //验证数据格式是否正确
+            $result = $next($name, $args, $context);
+            return $result;
+        });
         //2、响应客户端请求（解析参数）
 
         //3、按照约定的命名规则去定位代码位置
+        $rpcConf = config('rpc');
+        if (!is_array($rpcConf)) {
+            throw new \Exception('配置监听地址格式有误', 500);
+        }
+        // 添加监听地址
+        $server->addListener($rpcConf['uri']);
 
         return $server;
     }
