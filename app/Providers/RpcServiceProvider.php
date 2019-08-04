@@ -33,5 +33,6 @@ class RpcServiceProvider extends ServiceProvider
             throw new \Exception('缺少rpc路由文件', 500);
         }
         require $routeFilePath;
+        $this->publishes([$routeFilePath => config_path('rpc')]);
     }
 }

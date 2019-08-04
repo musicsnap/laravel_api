@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Log;
 
 class RpcServer
 {
-    public function handle(){
+    public function __construct(){
         $server = new Service();
         //1、rpc 服务的构建（Hprose,swoole,rabbitmq）
         $server->onSendError = function(&$error, \stdClass $context) {
@@ -38,8 +38,7 @@ class RpcServer
         if (!is_array($rpcConf)) {
             throw new \Exception('配置监听地址格式有误', 500);
         }
-        // 添加监听地址
-        $server->addListener($rpcConf['uri']);
+        var_dump($server);
 
         return $server;
     }
