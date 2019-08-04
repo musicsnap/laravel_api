@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\Rpc\RpcServer;
+use App\Services\Rpc\RpcServerService;
 use Illuminate\Support\ServiceProvider;
 
 class RpcServiceProvider extends ServiceProvider
@@ -16,7 +16,7 @@ class RpcServiceProvider extends ServiceProvider
     {
         //定义绑定关系
         $this->app->singleton('rpc.server', function ($app) {
-            return new RpcServer();
+            return new RpcServerService();
         });
     }
 

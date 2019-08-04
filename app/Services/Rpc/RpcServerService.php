@@ -10,11 +10,11 @@ namespace App\Services\Rpc;
 use Hprose\Socket\Service;
 use Illuminate\Support\Facades\Log;
 
-class RpcServer
+class RpcServerService
 {
     public function __construct(){
         $server = new Service();
-        //1、rpc 服务的构建（Hprose,swoole,rabbitmq）
+        //1、rpc 服务的构建（Hprose,swoole,rabbitmq,socket）
         $server->onSendError = function(&$error, \stdClass $context) {
             Log::info($error);
         };

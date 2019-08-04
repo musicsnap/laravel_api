@@ -7,7 +7,7 @@
  */
 namespace App\Services\Rpc;
 
-class RpcClient
+class RpcClientService
 {
 
 }
