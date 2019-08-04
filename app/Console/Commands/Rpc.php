@@ -40,7 +40,7 @@ class Rpc extends Command
         //
         $argc = $this->argument('argc');
 
-        $server = app('rpc.server');
+        $server = app('rpcServer');
 //        var_dump($server);
 //        $server->start();
     }
