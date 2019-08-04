@@ -7,8 +7,7 @@
  */
 namespace App\Services\Rpc;
 
-use Hprose\Socket\Server;
-use Hprose\Socket\Service;
+use Hprose\Filter\JSONRPC\ServiceFilter;
 use Illuminate\Support\Facades\Log;
 
 class RpcServerService
@@ -21,6 +20,8 @@ class RpcServerService
         $server->onSendError = function(&$error, \stdClass $context) {
             Log::info($error);
         };
+        //支持jsonRpc
+        $server->addFilter(new ServiceFilter());
 
         //2、调用中间件
         $server->addInvokeHandler(function ($name, array &$args, \stdClass $context, \Closure $next) {
