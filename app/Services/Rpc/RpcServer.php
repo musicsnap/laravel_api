@@ -27,6 +27,7 @@ class RpcServer
         //调用中间件
         $server->addInvokeHandler(function ($name, array &$args, \stdClass $context, \Closure $next) {
             //验证数据格式是否正确
+
             $result = $next($name, $args, $context);
             return $result;
         });
