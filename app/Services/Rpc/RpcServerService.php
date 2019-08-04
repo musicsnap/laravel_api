@@ -16,7 +16,7 @@ class RpcServerService
         $server = new RpcServer();
         $server->setErrorTypes(E_ALL);
         $server->setDebugEnabled();
-        //1、rpc 服务的构建（Hprose,swoole,rabbitmq,socket）
+        //1、rpc 服务的构建（Hprose,swoole,rabbitmq,socket,php-rpc,json-rpc,grpc,thrit）
         $server->onSendError = function(&$error, \stdClass $context) {
             Log::info($error);
         };
@@ -26,6 +26,7 @@ class RpcServerService
         //2、调用中间件
         $server->addInvokeHandler(function ($name, array &$args, \stdClass $context, \Closure $next) {
             //验证数据格式是否正确
+            //service:method:params
 
             $result = $next($name, $args, $context);
             return $result;
@@ -37,7 +38,7 @@ class RpcServerService
         if (!is_array($rpcConf)) {
             throw new \Exception('配置监听地址格式有误', 500);
         }
-
+        var_dump($rpcConf);
         $server->addListener($rpcConf['uri']);
 
         return $server;
