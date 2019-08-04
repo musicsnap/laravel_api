@@ -34,11 +34,18 @@ class RpcServerService
         //4、响应客户端请求（解析参数）
 
         //5、按照约定的命名规则去定位代码位置
+        $routeFilePath = base_path('routes/rpc.php');
+        if (!file_exists($routeFilePath)) {
+            throw new \Exception('缺少rpc路由文件', 500);
+        }
+        require $routeFilePath;
+
+        $server->addFunction('','');
+
         $rpcConf = config('rpc');
         if (!is_array($rpcConf)) {
             throw new \Exception('配置监听地址格式有误', 500);
         }
-        var_dump($rpcConf);
         $server->addListener($rpcConf['uri']);
 
         return $server;

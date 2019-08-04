@@ -33,11 +33,5 @@ class RpcServiceProvider extends ServiceProvider
     public function boot()
     {
         //监听程序
-        //1、加载路由
-        $routeFilePath = base_path('routes/rpc.php');
-        if (!file_exists($routeFilePath)) {
-            throw new \Exception('缺少rpc路由文件', 500);
-        }
-        require $routeFilePath;
     }
 }
