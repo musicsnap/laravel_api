@@ -46,9 +46,8 @@ class RpcServerService
         if (!is_array($rpcConf)) {
             throw new \Exception('配置监听地址格式有误', 500);
         }
-        $server->addListener($rpcConf['uri']);
 
-        return $server;
+        $server->start();
     }
 
 }

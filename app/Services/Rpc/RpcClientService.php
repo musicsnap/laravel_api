@@ -62,4 +62,9 @@ class RpcClientService
     {
         var_dump("rpc123");
     }
+
+    public function __call($name, $arguments)
+    {
+        return call_user_func_array(array($this, $name), $$arguments);
+    }
 }
