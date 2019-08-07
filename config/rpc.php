@@ -4,16 +4,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Third Party Services
+    | RPC Services
     |--------------------------------------------------------------------------
-    |
-    | This file is for storing the credentials for third party services such
-    | as Stripe, Mailgun, SparkPost and others. This file provides a sane
-    | default location for this type of information, allowing packages
-    | to have a conventional place to find your various credentials.
-    |
     */
+    'uri' =>'http://0.0.0.0:2016',
+    'crossDomain' =>true,
+    'router' => [
+        ['service'=>'','controller'=>'','action'=>''],
+    ]
 
-    'uri' =>'tcp://0.0.0.0:2016'
 
 ];
