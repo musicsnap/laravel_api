@@ -32,6 +32,13 @@ class MailMessage extends SimpleMessage implements Renderable
     public $markdown = 'notifications::email';
 
     /**
+     * The current theme being used when generating emails.
+     *
+     * @var string|null
+     */
+    public $theme;
+
+    /**
      * The "from" information for the message.
      *
      * @var array
@@ -81,6 +88,13 @@ class MailMessage extends SimpleMessage implements Renderable
     public $priority;
 
     /**
+     * The callbacks for the message.
+     *
+     * @var array
+     */
+    public $callbacks = [];
+
+    /**
      * Set the view for the mail message.
      *
      * @param  array|string  $view
@@ -123,6 +137,19 @@ class MailMessage extends SimpleMessage implements Renderable
     public function template($template)
     {
         $this->markdown = $template;
+
+        return $this;
+    }
+
+    /**
+     * Set the theme to use with the Markdown template.
+     *
+     * @param  string  $theme
+     * @return $this
+     */
+    public function theme($theme)
+    {
+        $this->theme = $theme;
 
         return $this;
     }
@@ -285,5 +312,18 @@ class MailMessage extends SimpleMessage implements Renderable
         return Container::getInstance()
             ->make(Markdown::class)
             ->render($this->markdown, $this->data());
+    }
+
+    /**
+     * Register a callback to be called with the Swift message instance.
+     *
+     * @param  callable  $callback
+     * @return $this
+     */
+    public function withSwiftMessage($callback)
+    {
+        $this->callbacks[] = $callback;
+
+        return $this;
     }
 }

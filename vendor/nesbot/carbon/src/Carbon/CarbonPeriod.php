@@ -11,10 +11,12 @@
 namespace Carbon;
 
 use BadMethodCallException;
+use Carbon\Exceptions\NotAPeriodException;
 use Carbon\Traits\Options;
 use Closure;
 use Countable;
 use DateInterval;
+use DatePeriod;
 use DateTime;
 use DateTimeInterface;
 use InvalidArgumentException;
@@ -232,6 +234,76 @@ class CarbonPeriod implements Iterator, Countable
     protected $tzName;
 
     /**
+     * Make a CarbonPeriod instance from given variable if possible.
+     *
+     * @param mixed $var
+     *
+     * @return static|null
+     */
+    public static function make($var)
+    {
+        try {
+            return static::instance($var);
+        } catch (NotAPeriodException $e) {
+            return static::create($var);
+        }
+    }
+
+    /**
+     * Create a new instance from a DatePeriod or CarbonPeriod object.
+     *
+     * @param CarbonPeriod|DatePeriod $period
+     *
+     * @return static
+     */
+    public static function instance($period)
+    {
+        if ($period instanceof self) {
+            return $period->copy();
+        }
+
+        if ($period instanceof DatePeriod) {
+            return new static(
+                $period->start,
+                $period->end ?: $period->recurrences,
+                $period->interval,
+                $period->include_start_date ? 0 : static::EXCLUDE_START_DATE
+            );
+        }
+
+        $class = get_called_class();
+        $type = gettype($period);
+
+        throw new NotAPeriodException(
+            'Argument 1 passed to '.$class.'::'.__METHOD__.'() '.
+            'must be an instance of DatePeriod or '.$class.', '.
+            ($type === 'object' ? 'instance of '.get_class($period) : $type).' given.'
+        );
+    }
+
+    /**
+     * Get a copy of the instance.
+     *
+     * @return static
+     */
+    public function copy()
+    {
+        return clone $this;
+    }
+
+    /**
+     * @alias copy
+     *
+     * Get a copy of the instance.
+     *
+     * @return static
+     */
+    public function clone()
+    {
+        return clone $this;
+    }
+
+    /**
      * Create a new instance.
      *
      * @return static
@@ -283,10 +355,7 @@ class CarbonPeriod implements Iterator, Countable
      */
     protected static function intervalHasTime(DateInterval $interval)
     {
-        // The array_key_exists and get_object_vars are used as a workaround to check microsecond support.
-        // Both isset and property_exists will fail on PHP 7.0.14 - 7.0.21 due to the following bug:
-        // https://bugs.php.net/bug.php?id=74852
-        return $interval->h || $interval->i || $interval->s || array_key_exists('f', get_object_vars($interval)) && $interval->f;
+        return $interval->h || $interval->i || $interval->s || $interval->f;
     }
 
     /**
@@ -315,6 +384,8 @@ class CarbonPeriod implements Iterator, Countable
 
     /**
      * Parse given ISO 8601 string into an array of arguments.
+     *
+     * @SuppressWarnings(PHPMD.ElseExpression)
      *
      * @param string $iso
      *
@@ -462,6 +533,8 @@ class CarbonPeriod implements Iterator, Countable
     /**
      * CarbonPeriod constructor.
      *
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
      * @throws InvalidArgumentException
      */
     public function __construct(...$arguments)
@@ -479,7 +552,7 @@ class CarbonPeriod implements Iterator, Countable
                     is_string($argument) && preg_match('/^(\d.*|P[T0-9].*|(?:\h*\d+(?:\.\d+)?\h*[a-z]+)+)$/i', $argument) ||
                     $argument instanceof DateInterval
                 ) &&
-                $parsed = CarbonInterval::make($argument)
+                $parsed = @CarbonInterval::make($argument)
             ) {
                 $this->setDateInterval($parsed);
             } elseif ($this->startDate === null && $parsed = Carbon::make($argument)) {
@@ -534,7 +607,9 @@ class CarbonPeriod implements Iterator, Countable
     {
         if (!is_a($dateClass, CarbonInterface::class, true)) {
             throw new InvalidArgumentException(sprintf(
-                'Given class does not implement %s: %s', CarbonInterface::class, $dateClass
+                'Given class does not implement %s: %s',
+                CarbonInterface::class,
+                $dateClass
             ));
         }
 
@@ -574,7 +649,7 @@ class CarbonPeriod implements Iterator, Countable
             throw new InvalidArgumentException('Invalid interval.');
         }
 
-        if ($interval->spec() === 'PT0S') {
+        if ($interval->spec() === 'PT0S' && !$interval->f) {
             throw new InvalidArgumentException('Empty interval is not accepted.');
         }
 
@@ -757,6 +832,8 @@ class CarbonPeriod implements Iterator, Countable
     /**
      * Add a filter to the stack.
      *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
      * @param callable $callback
      * @param string   $name
      *
@@ -775,6 +852,8 @@ class CarbonPeriod implements Iterator, Countable
 
     /**
      * Prepend a filter to the stack.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
      * @param callable $callback
      * @param string   $name
@@ -958,6 +1037,8 @@ class CarbonPeriod implements Iterator, Countable
     /**
      * Recurrences filter callback (limits number of recurrences).
      *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
      * @param \Carbon\Carbon $current
      * @param int            $key
      *
@@ -1132,7 +1213,7 @@ class CarbonPeriod implements Iterator, Countable
      *
      * @param CarbonInterface $date
      *
-     * @return Carbon
+     * @return CarbonInterface
      */
     protected function prepareForReturn(CarbonInterface $date)
     {
@@ -1170,7 +1251,7 @@ class CarbonPeriod implements Iterator, Countable
     /**
      * Return the current date.
      *
-     * @return Carbon|null
+     * @return CarbonInterface|null
      */
     public function current()
     {
@@ -1378,7 +1459,7 @@ class CarbonPeriod implements Iterator, Countable
     /**
      * Return the first date in the date period.
      *
-     * @return Carbon|null
+     * @return CarbonInterface|null
      */
     public function first()
     {
@@ -1390,7 +1471,7 @@ class CarbonPeriod implements Iterator, Countable
     /**
      * Return the last date in the date period.
      *
-     * @return Carbon|null
+     * @return CarbonInterface|null
      */
     public function last()
     {
@@ -1530,11 +1611,155 @@ class CarbonPeriod implements Iterator, Countable
         return $this;
     }
 
+    /**
+     * Set the instance's timezone from a string or object and add/subtract the offset difference.
+     *
+     * @param \DateTimeZone|string $timezone
+     *
+     * @return static
+     */
     public function shiftTimezone($timezone)
     {
         $this->tzName = $timezone;
         $this->timezone = $timezone;
 
         return $this;
+    }
+
+    /**
+     * Returns the end is set, else calculated from start an recurrences.
+     *
+     * @return CarbonInterface
+     */
+    public function calculateEnd()
+    {
+        if ($end = $this->getEndDate()) {
+            return $end;
+        }
+
+        $dates = iterator_to_array($this);
+
+        return end($dates);
+    }
+
+    /**
+     * Returns true if the current period overlaps the given one (if 1 parameter passed)
+     * or the period between 2 dates (if 2 parameters passed).
+     *
+     * @param CarbonPeriod|\DateTimeInterface|Carbon|CarbonImmutable|string $rangeOrRangeStart
+     * @param \DateTimeInterface|Carbon|CarbonImmutable|string|null         $rangeEnd
+     *
+     * @return bool
+     */
+    public function overlaps($rangeOrRangeStart, $rangeEnd = null)
+    {
+        $range = $rangeEnd ? static::create($rangeOrRangeStart, $rangeEnd) : $rangeOrRangeStart;
+
+        if (!($range instanceof self)) {
+            $range = static::create($range);
+        }
+
+        return $this->calculateEnd() > $range->getStartDate() && $range->calculateEnd() > $this->getStartDate();
+    }
+
+    /**
+     * Execute a given function on each date of the period.
+     *
+     * @example
+     * ```
+     * Carbon::create('2020-11-29')->daysUntil('2020-12-24')->forEach(function (Carbon $date) {
+     *   echo $date->diffInDays('2020-12-25')." days before Christmas!\n";
+     * });
+     * ```
+     *
+     * @param callable $callback
+     */
+    public function forEach(callable $callback)
+    {
+        foreach ($this as $date) {
+            $callback($date);
+        }
+    }
+
+    /**
+     * Execute a given function on each date of the period and yield the result of this function.
+     *
+     * @example
+     * ```
+     * $period = Carbon::create('2020-11-29')->daysUntil('2020-12-24');
+     * echo implode("\n", iterator_to_array($period->map(function (Carbon $date) {
+     *   return $date->diffInDays('2020-12-25').' days before Christmas!';
+     * })));
+     * ```
+     *
+     * @param callable $callback
+     *
+     * @return \Generator
+     */
+    public function map(callable $callback)
+    {
+        foreach ($this as $date) {
+            yield $callback($date);
+        }
+    }
+
+    /**
+     * Determines if the instance is equal to another
+     *
+     * @param mixed $period
+     *
+     * @see equalTo()
+     *
+     * @return bool
+     */
+    public function eq($period): bool
+    {
+        return $this->equalTo($period);
+    }
+
+    /**
+     * Determines if the instance is equal to another
+     *
+     * @param mixed $period
+     *
+     * @return bool
+     */
+    public function equalTo($period): bool
+    {
+        if (!($period instanceof self)) {
+            $period = self::make($period);
+        }
+
+        return $period !== null
+            && $this->getDateInterval()->eq($period->getDateInterval())
+            && $this->getStartDate()->eq($period->getStartDate())
+            && $this->getEndDate()->eq($period->getEndDate())
+            && $this->getOptions() === $period->getOptions();
+    }
+
+    /**
+     * Determines if the instance is not equal to another
+     *
+     * @param mixed $period
+     *
+     * @see notEqualTo()
+     *
+     * @return bool
+     */
+    public function ne($period): bool
+    {
+        return $this->notEqualTo($period);
+    }
+
+    /**
+     * Determines if the instance is not equal to another
+     *
+     * @param mixed $period
+     *
+     * @return bool
+     */
+    public function notEqualTo($period): bool
+    {
+        return !$this->eq($period);
     }
 }

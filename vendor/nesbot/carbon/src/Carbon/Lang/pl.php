@@ -21,21 +21,28 @@
  * - Jan
  * - Paul
  * - damlys
- * - Marek marast78
+ * - Marek (marast78)
+ * - Peter (UnrulyNatives)
  */
 return [
     'year' => ':count rok|:count lata|:count lat',
+    'a_year' => 'rok|:count lata|:count lat',
     'y' => ':countr|:countl',
     'month' => ':count miesiąc|:count miesiące|:count miesięcy',
+    'a_month' => 'miesiąc|:count miesiące|:count miesięcy',
     'm' => ':countmies',
     'week' => ':count tydzień|:count tygodnie|:count tygodni',
+    'a_week' => 'tydzień|:count tygodnie|:count tygodni',
     'w' => ':counttyg',
     'day' => ':count dzień|:count dni|:count dni',
+    'a_day' => 'dzień|:count dni|:count dni',
     'd' => ':countd',
     'hour' => ':count godzina|:count godziny|:count godzin',
+    'a_hour' => 'godzina|:count godziny|:count godzin',
     'h' => ':countg',
     'minute' => ':count minuta|:count minuty|:count minut',
     'min' => ':countm',
+    'a_minute' => 'minuta|:count minuty|:count minut',
     'second' => ':count sekunda|:count sekundy|:count sekund',
     'a_second' => '{1}kilka sekund|:count sekunda|:count sekundy|:count sekund',
     's' => ':counts',
@@ -89,8 +96,10 @@ return [
         'sameElse' => 'L',
     ],
     'ordinal' => ':number.',
-    'months' => ['styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec', 'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień'],
+    'months' => ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'],
+    'months_standalone' => ['styczeń', 'luty', 'marzec', 'kwiecień', 'maj', 'czerwiec', 'lipiec', 'sierpień', 'wrzesień', 'październik', 'listopad', 'grudzień'],
     'months_short' => ['sty', 'lut', 'mar', 'kwi', 'maj', 'cze', 'lip', 'sie', 'wrz', 'paź', 'lis', 'gru'],
+    'months_regexp' => '/DD?o?\.?(\[[^\[\]]*\]|\s)+MMMM?/',
     'weekdays' => ['niedziela', 'poniedziałek', 'wtorek', 'środa', 'czwartek', 'piątek', 'sobota'],
     'weekdays_short' => ['ndz', 'pon', 'wt', 'śr', 'czw', 'pt', 'sob'],
     'weekdays_min' => ['Nd', 'Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So'],

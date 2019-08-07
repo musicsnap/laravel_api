@@ -246,7 +246,7 @@ trait ValidatesAttributes
                 return Date::parse($value);
             }
 
-            return new DateTime($value);
+            return date_create($value) ?: null;
         } catch (Exception $e) {
             //
         }
@@ -988,7 +988,7 @@ trait ValidatesAttributes
      */
     public function validateImage($attribute, $value)
     {
-        return $this->validateMimes($attribute, $value, ['jpeg', 'png', 'gif', 'bmp', 'svg']);
+        return $this->validateMimes($attribute, $value, ['jpeg', 'png', 'gif', 'bmp', 'svg', 'webp']);
     }
 
     /**
@@ -1538,6 +1538,19 @@ trait ValidatesAttributes
     public function validateStartsWith($attribute, $value, $parameters)
     {
         return Str::startsWith($value, $parameters);
+    }
+
+    /**
+     * Validate the attribute ends with a given substring.
+     *
+     * @param  string  $attribute
+     * @param  mixed   $value
+     * @param  array   $parameters
+     * @return bool
+     */
+    public function validateEndsWith($attribute, $value, $parameters)
+    {
+        return Str::endsWith($value, $parameters);
     }
 
     /**
