@@ -7,10 +7,10 @@ return [
     | RPC Services
     |--------------------------------------------------------------------------
     */
-    'uri' =>'http://0.0.0.0:2016',
+    'uri' =>'tcp://0.0.0.0:1314',
     'crossDomain' =>true,
-    'router' => [
-        ['service'=>'','controller'=>'','action'=>''],
+    'method' => [
+        ['service'=>'App\\Services\\CacheService','alias'=>'cache'],
     ]
 
 

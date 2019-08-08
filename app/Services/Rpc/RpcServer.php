@@ -7,13 +7,16 @@
  */
 namespace App\Services\Rpc;
 
-use Hprose\Http\Server;
+use Hprose\Socket\Server;
 
 class RpcServer extends Server
 {
-    public function __construct()
+    public function __construct($uri = null)
     {
-        parent::__construct();
-
+        parent::__construct($uri);
+        $this->uris = [];
+        if ($uri) {
+            $this->addListener($uri);
+        }
     }
 }

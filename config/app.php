@@ -234,7 +234,8 @@ return [
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         'Debugbar' => Barryvdh\Debugbar\Facade::class,
 
-        'Rpc' => App\Facades\rpcClient::class,
+        'rpcClient' => App\Facades\rpcClient::class,
+        'rpcServer' => App\Facades\rpcServer::class,
     ],
 
 ];

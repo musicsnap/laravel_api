@@ -13,24 +13,27 @@ use Illuminate\Support\Facades\Log;
 
 class RpcServerService
 {
+    private $server;
+
     public function __construct(){
-        $server = new RpcServer();
-        $server->setErrorTypes(E_ALL);
-        $server->setDebugEnabled();
+        $this->server = new RpcServer();
+        $this->server->setErrorTypes(E_ALL);
+        $this->server->setDebugEnabled();
         //1、rpc 服务的构建（Hprose,swoole,rabbitmq,socket,php-rpc,json-rpc,grpc,thrit）
-        $server->onSendError = function(&$error, \stdClass $context) {
+        $this->server->onSendError = function(&$error, \stdClass $context) {
             Log::info($error);
         };
         $rpcConf = config('rpc');
         if (empty($rpcConf['uri'])) {
             throw new \Exception('配置监听地址格式有误', 500);
         }
-        //支持jsonRpc
-        $server->addFilter(new ServiceFilter());
-
+        $method = $rpcConf['method'];
+        if(empty($method)){
+            throw new \Exception('配置服务方法不存在', 500);
+        }
         //2、调用中间件
-        $server->addInvokeHandler(function ($name, array &$args, \stdClass $context, \Closure $next) {
-            //3、验证数据格式是否正确
+        $this->server->addInvokeHandler(function ($name, array &$args, \stdClass $context, \Closure $next) {
+            //3、验证数据格式是否正确,以及判断方法
             //service:method:params
 
             var_dump($args);
@@ -38,12 +41,27 @@ class RpcServerService
             return $result;
         });
         //4、解析代码并执行添加服务
+        foreach ($method as $item)
+        {
+            //开始注册服务方法
+            $class = $item['service'];
+            $alias = $item['alias'];
+            $classObj = new $class;
+            $this->server->addFilter(new ServiceFilter());
+            $this->server->addInstanceMethods($classObj, '', $alias);
+        }
+        //5、监听服务
+        $this->server->addListener($rpcConf['uri']);
+    }
 
-//        $server->addFunction('','');
+    public function getServer()
+    {
+        return $this->server;
+    }
 
-
-
-        $server->start();
+    public function runServer()
+    {
+        $this->server->start();
     }
 
 }
