@@ -9,7 +9,8 @@ class TestController extends Controller
 {
     public function index(){
 
-        rpcClient::rpcCall(1,2);
+        $data = rpcClient::rpcCall('cache','hello');
+        return response()->json([$data]);
     }
 
 }

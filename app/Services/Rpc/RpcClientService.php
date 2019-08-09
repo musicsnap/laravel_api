@@ -7,6 +7,8 @@
  */
 namespace App\Services\Rpc;
 
+use Hprose\Socket\Client;
+
 class RpcClientService
 {
 
@@ -58,9 +60,13 @@ class RpcClientService
         }
     }
 
-    public function rpcCall( $method ,$params = [])
+    public function rpcCall($service,$method ,$params = [])
     {
-        var_dump("rpc123");
+        $conf = config('rpc');
+        $client = new Client($conf['uri']);
+        $service_method = $service.'_'.$method;
+        $res = $client->cache_hello('world');
+       return $res;
     }
 
     public function __call($name, $arguments)

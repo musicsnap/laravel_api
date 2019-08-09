@@ -8,6 +8,7 @@
 namespace App\Services\Rpc;
 
 use Hprose\Filter\JSONRPC\ServiceFilter;
+use function Hprose\Future\isFuture;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -23,6 +24,7 @@ class RpcServerService
         $this->server->onSendError = function(&$error, \stdClass $context) {
             Log::info($error);
         };
+        //2、判断服务配置
         $rpcConf = config('rpc');
         if (empty($rpcConf['uri'])) {
             throw new \Exception('配置监听地址格式有误', 500);
@@ -31,12 +33,10 @@ class RpcServerService
         if(empty($method)){
             throw new \Exception('配置服务方法不存在', 500);
         }
-        //2、调用中间件
+        //3、调用中间件
         $this->server->addInvokeHandler(function ($name, array &$args, \stdClass $context, \Closure $next) {
-            //3、验证数据格式是否正确,以及判断方法
             //service:method:params
-
-            var_dump($args);
+            //这边需要参数判读处理
             $result = $next($name, $args, $context);
             return $result;
         });
@@ -47,10 +47,11 @@ class RpcServerService
             $class = $item['service'];
             $alias = $item['alias'];
             $classObj = new $class;
-            $this->server->addFilter(new ServiceFilter());
             $this->server->addInstanceMethods($classObj, '', $alias);
         }
-        //5、监听服务
+        //5、Json过滤
+        $this->server->addFilter(new ServiceFilter());
+        //6、监听服务
         $this->server->addListener($rpcConf['uri']);
     }
 

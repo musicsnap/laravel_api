@@ -14,4 +14,9 @@ class CacheService
     {
         return self::$arr[$key];
     }
+
+    public function hello($str)
+    {
+        return "Hello ". $str . "!";
+    }
 }
