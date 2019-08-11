@@ -65,8 +65,8 @@ class RpcClientService
         $conf = config('rpc');
         $client = new Client($conf['uri']);
         $service_method = $service.'_'.$method;
-        $res = $client->cache_hello('world');
-       return $res;
+        $res = $client->$service_method('hello');
+        return $res;
     }
 
     public function __call($name, $arguments)

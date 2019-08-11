@@ -19,10 +19,18 @@ class RpcServerService
     public function __construct(){
         $this->server = new RpcServer();
         $this->server->setErrorTypes(E_ALL);
+//        $this->server->setGetEnabled();
         $this->server->setDebugEnabled();
         //1、rpc 服务的构建（Hprose,swoole,rabbitmq,socket,php-rpc,json-rpc,grpc,thrit）
         $this->server->onSendError = function(&$error, \stdClass $context) {
             Log::info($error);
+        };
+        $this->server->onError = function($error, \stdClass $context) {
+            var_dump($error);
+            var_dump($context);
+        };
+        $this->server->onAccept = function(\stdClass $context) {
+            var_dump($context);
         };
         //2、判断服务配置
         $rpcConf = config('rpc');
