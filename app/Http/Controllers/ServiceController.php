@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Facades\rpcClient;
 
-class TestController extends Controller
+class ServiceController extends Controller
 {
     public function index(){
         $param = array(
