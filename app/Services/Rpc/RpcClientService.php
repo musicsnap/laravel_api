@@ -54,8 +54,7 @@ class RpcClientService
         try{
             $result = call_user_func([$obj,$method],$params);
             var_dump($result);
-        }catch (\Exception $exception)
-        {
+        }catch (\Exception $exception) {
 
         }
     }
@@ -63,14 +62,22 @@ class RpcClientService
     public function rpcCall($service,$method ,$params = [])
     {
         $conf = config('rpc');
-        $client = new Client($conf['uri']);
+        $client = new Client($conf['uri'],false);
+
         $service_method = $service.'_'.$method;
-        $res = $client->$service_method('hello');
+        $res = $client->invoke("$service_method",$params);
+//        $res = $client->$service_method($params);
         return $res;
     }
 
     public function __call($name, $arguments)
     {
-        return call_user_func_array(array($this, $name), $$arguments);
+        //
+        $data = array(
+            'service'=>$arguments['0'],
+            'method'=>$name,
+            'params'=>$arguments
+        );
+
     }
 }

@@ -19,7 +19,6 @@ class RpcServerService
     public function __construct(){
         $this->server = new RpcServer();
         $this->server->setErrorTypes(E_ALL);
-//        $this->server->setGetEnabled();
         $this->server->setDebugEnabled();
         //1、rpc 服务的构建（Hprose,swoole,rabbitmq,socket,php-rpc,json-rpc,grpc,thrit）
         $this->server->onSendError = function(&$error, \stdClass $context) {
@@ -30,7 +29,7 @@ class RpcServerService
             var_dump($context);
         };
         $this->server->onAccept = function(\stdClass $context) {
-            var_dump($context);
+            var_dump($context->userdata);
         };
         //2、判断服务配置
         $rpcConf = config('rpc');
@@ -45,6 +44,7 @@ class RpcServerService
         $this->server->addInvokeHandler(function ($name, array &$args, \stdClass $context, \Closure $next) {
             //service:method:params
             //这边需要参数判读处理
+            var_dump($args);
             $result = $next($name, $args, $context);
             return $result;
         });

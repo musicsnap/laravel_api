@@ -5,18 +5,21 @@ class CacheService
 {
     static public $arr = array();
 
-    public function set($key,$value)
+    public function set($params)
     {
-        self::$arr[$key] =$value;
+        self::$arr[$params['key']] =$params['value'];
     }
 
-    public function get($key)
+    public function get($params)
     {
-        return self::$arr[$key];
+        return self::$arr[$params['key']];
     }
 
-    public function hello($str)
+    public function hello($params)
     {
-        return "Hello ". $str . "!";
+        $service = $params['service'];
+        $method = $params['method'];
+        $params = json_encode($params['param'],true);
+        return "this is {$service} 服务;$method 方法;参数 {$params}";
     }
 }

@@ -8,9 +8,16 @@ use App\Facades\rpcClient;
 class TestController extends Controller
 {
     public function index(){
-
-        $data = rpcClient::rpcCall('cache','hello');
-        return response()->json([$data]);
+        $param = array(
+            'service'=>'cache',
+            'method'=>'hello',
+            'param'=>array(
+                'name'=>'xx',
+                'age'=>'12',
+            ),
+        );
+        $data = rpcClient::rpcCall('cache','hello',[$param]);
+        return response()->json(['res'=>$data]);
     }
 
 }
