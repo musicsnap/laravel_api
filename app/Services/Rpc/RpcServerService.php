@@ -36,8 +36,8 @@ class RpcServerService
         if (empty($rpcConf['uri'])) {
             throw new \Exception('配置监听地址格式有误', 500);
         }
-        $method = $rpcConf['method'];
-        if(empty($method)){
+        $services = $rpcConf['registries'];
+        if(empty($services)){
             throw new \Exception('配置服务方法不存在', 500);
         }
         //3、调用中间件
@@ -49,7 +49,7 @@ class RpcServerService
             return $result;
         });
         //4、解析代码并执行添加服务
-        foreach ($method as $item)
+        foreach ($services as $item)
         {
             //开始注册服务方法
             $class = $item['service'];

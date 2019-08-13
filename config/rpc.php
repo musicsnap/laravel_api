@@ -9,7 +9,7 @@ return [
     */
     'uri' =>'tcp://0.0.0.0:1314',
     'crossDomain' =>true,
-    'method' => [
+    'registries' => [
         ['service'=>'App\\Services\\CacheService','alias'=>'cache'],
     ]
 
