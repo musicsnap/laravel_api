@@ -25,11 +25,10 @@ class RpcServerService
             Log::info($error);
         };
         $this->server->onError = function($error, \stdClass $context) {
-            var_dump($error);
-            var_dump($context);
+
         };
         $this->server->onAccept = function(\stdClass $context) {
-            var_dump($context->userdata);
+
         };
         //2、判断服务配置
         $rpcConf = config('rpc');
@@ -43,8 +42,11 @@ class RpcServerService
         //3、调用中间件
         $this->server->addInvokeHandler(function ($name, array &$args, \stdClass $context, \Closure $next) {
             //service:method:params
+            $data = $args[0];
+            if(!is_array($data)) throw new \Exception('参数不正确!', 500);
+            if(empty($data['service'])) throw new \Exception('服务名称不正确!', 500);
+            if(empty($data['method'])) throw new \Exception('服务方法不正确!', 500);
             //这边需要参数判读处理
-            var_dump($args);
             $result = $next($name, $args, $context);
             return $result;
         });
