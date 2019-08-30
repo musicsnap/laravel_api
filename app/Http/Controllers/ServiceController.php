@@ -14,7 +14,7 @@ class ServiceController extends Controller
             'param'=>array(
                 'name'=>'xx',
                 'age'=>'12',
-            ),
+            )
         );
         $data = rpcClient::rpcCall('cache','hello',[$param]);
         return response()->json(['res'=>$data]);

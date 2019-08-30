@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Services_UserService - Yar Server</title>
+    <style>
+        body { margin: 0; font:14px/20px Verdana, Arial, sans-serif; color: #333; background: #f8f8f8;}
+        h1, h2, pre { margin: 0; padding: 0;}
+        h1 { font:bold 28px Verdana,Arial; background:#99c; padding: 12px 5px; border-bottom: 4px solid #669; box-shadow: 0 1px 4px #bbb; color: #222;}
+        h2 { font:normal 20px/22px Georgia, Times, "Times New Roman", serif; padding: 5px 0 8px; margin: 20px 10px 0; border-bottom: 1px solid #ddd; cursor:pointer;}
+        p, dd { color: #555; }
+        .api-info { padding: 10px 0; margin-left: 20px; }
+        .api-block { margin-left: 40px;}
+        h2 u { font-size:20px;text-decoration:none;padding:10px; }
+    </style>
+    <script>
+        function _t(elem) {
+            var block = elem.nextSibling;
+            var info = elem.getElementsByTagName('u')[0];
+            while (block) {
+                if ( block.nodeType == 1 && block.className.indexOf('api-block') > -1 ) {
+                    break;
+                }
+                block = block.nextSibling;
+            }
+            var isHidden = block.style.display == 'none';
+            block.style.display = isHidden ? '' : 'none';
+            info.innerHTML = isHidden ? '-'  : '+';
+        }
+    </script>
+</head>
+<body>
+<!-- powered by yar-2.0.5 -->
+<h1>Yar Server: Services_UserService</h1> <h2 onclick="_t(this)"><u>+</u>Services_UserService::getUserList()</h2>
+<div class="api-block" style="display:none">
+ <pre style="white-space:pre-line">/**
+     * Service
+     * 获取用户列表
+     */</pre>
+</div>
+</body>
+</html>

@@ -50,6 +50,12 @@ class RpcServerService
             $result = $next($name, $args, $context);
             return $result;
         });
+
+        //定义调用缺失服务的方法
+        $this->server->addMissingFunction(function($name, $args){
+
+        });
+
         //4、解析代码并执行添加服务
         foreach ($services as $item)
         {
